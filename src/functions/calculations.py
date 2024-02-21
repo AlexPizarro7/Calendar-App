@@ -83,27 +83,28 @@ def create_lunar_month_structure(new_moons, new_year_date, year):
     Returns:
     list of dict: Lunar months with start and end dates, and lengths.
     """
-    # Convert all new moon datetime objects to date only
-    new_moons_dates_only = [moon.date() for moon in new_moons]
+    # Convert new_year_date to date-only for comparison
+    new_year_date_only = new_year_date.date()
 
-    # Find the index of the new year moon
-    new_year_index = new_moons_dates_only.index(new_year_date.date())
+    # Find the index of the new year moon in the list
+    new_year_index = next(i for i, moon in enumerate(
+        new_moons) if moon.date() == new_year_date_only)
 
     # Create lunar months structure
     lunar_months = []
-    for i in range(new_year_index, len(new_moons_dates_only)):
+    for i in range(new_year_index, len(new_moons)):
         start_date = new_moons[i].date()
 
-        # Calculate end_date as the day before the next new moon
-        # For the last month in the list, use the last day of the year
-        if i + 1 < len(new_moons_dates_only):
+        # For the last month in the list, check if it's in the same year
+        if i + 1 < len(new_moons) and new_moons[i + 1].date().year == year:
             end_date = new_moons[i + 1].date() - datetime.timedelta(days=1)
         else:
             end_date = datetime.date(year, 12, 31)
 
-        length = (end_date - start_date).days + 1  # Including the start date
+        length = (end_date - start_date).days + 1
 
-        if start_date.year == year:  # Include only months that start in the specified year
+        # Only include months that start in the specified year
+        if start_date.year == year:
             lunar_months.append({
                 "start_date": start_date.strftime("%Y-%m-%d"),
                 "end_date": end_date.strftime("%Y-%m-%d"),
