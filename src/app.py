@@ -1,33 +1,27 @@
-from convertdate import french_republican
-from datetime import datetime
-import sys
+from functions.calculations import *
 
+# Define the year for which the calendar is being created
+year = 2024
 
-def convert_to_french_republican(year, month, day):
-    return french_republican.from_gregorian(year, month, day)
+# Step 1: Get the new moons for the year
+new_moons_for_year = get_new_moons(year)
 
+# Step 2: Calculate the spring equinox
+spring_equinox = get_spring_equinox(year)
 
-print("Date Converter to French Republican Calendar")
+# Step 3: Find the closest new moon to the spring equinox
+new_year_date = get_closest_new_moon_to_equinox(year)
 
-choice = input(
-    "Do you want to use the current date? (yes/no): ").strip().lower()
+# Print the spring equinox and the start date of the new year
+print(f"Spring Equinox: {spring_equinox}")
+print(f"New Year starts on: {new_year_date.strftime('%A, %B %d, %Y')}")
 
-if choice == 'yes':
-    current_date = datetime.now()
-    year, month, day = current_date.year, current_date.month, current_date.day
-elif choice == 'no':
-    try:
-        year = int(input("Enter year (YYYY): "))
-        month = int(input("Enter month (1-12): "))
-        day = int(input("Enter day (1-31): "))
-        datetime(year, month, day)  # Validate date
-    except ValueError:
-        print("Invalid date entered.")
-        sys.exit(1)
-else:
-    print("Invalid choice. Please enter 'yes' or 'no'.")
-    sys.exit(1)
+# Step 4: Create the lunar month structure
+# Include the 'year' parameter in the function call
+lunar_month_structure = create_lunar_month_structure(
+    new_moons_for_year, new_year_date, year)
 
-french_date = convert_to_french_republican(year, month, day)
-print(
-    f"French Republican Date: Year {french_date[0]}, Month {french_date[1]}, Day {french_date[2]}")
+# Print the details of each lunar month
+for month in lunar_month_structure:
+    print(f"Start Date: {month['start_date']}, End Date: {
+          month['end_date']}, Length: {month['length']} days")
